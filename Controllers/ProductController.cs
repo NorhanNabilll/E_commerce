@@ -179,8 +179,8 @@ namespace ECommerce.Controllers
 
 
 
-        // Delete product (Admin or Supplier - own products)
-        [Authorize(Roles = "Admin")]
+
+    //    [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<APIResponse>> DeleteProduct(int id)
         {

@@ -64,6 +64,7 @@ namespace ECommerce.Controllers
 
         // POST: api/cart/add
         [HttpPost("add")]
+        [Authorize]
         public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         {
             var userId = GetUserId();
@@ -108,6 +109,7 @@ namespace ECommerce.Controllers
 
         // PUT: api/cart/update
         [HttpPut("update")]
+        [Authorize]
         public async Task<IActionResult> UpdateQuantity(int productId, int quantity)
         {
             if (quantity < 1)
@@ -133,6 +135,7 @@ namespace ECommerce.Controllers
         }
 
         // DELETE: api/cart/removeItem
+        [Authorize]
         [HttpDelete("removeItem")]
         public async Task<IActionResult> RemoveItem(int productId)
         {
@@ -157,6 +160,7 @@ namespace ECommerce.Controllers
 
         // DELETE: api/cart/clear
         [HttpDelete("clear")]
+        [Authorize]
         public async Task<IActionResult> ClearCart()
         {
             var userId = GetUserId();

@@ -6,6 +6,7 @@ using ECommerce.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ECommerce.Controllers
 {
@@ -102,6 +103,7 @@ namespace ECommerce.Controllers
 
         // Create category
         [HttpPost]
+       // [Authorize(Roles = "Admin")]
         [SwaggerOperation(Summary = "Create Category")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(APIResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(APIResponse))]
@@ -135,6 +137,7 @@ namespace ECommerce.Controllers
 
         // Update category
         [HttpPut]
+      //  [Authorize(Roles = "Admin")]
         [SwaggerOperation(Summary = "Update Category")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(APIResponse))]
@@ -177,6 +180,7 @@ namespace ECommerce.Controllers
 
         // Soft delete category
         [HttpDelete("{id}")]
+       // [Authorize(Roles = "Admin")]
         [SwaggerOperation(Summary = "Soft Delete Category")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(APIResponse))]
