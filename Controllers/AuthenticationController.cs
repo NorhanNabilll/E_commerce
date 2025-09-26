@@ -109,7 +109,7 @@ namespace ECommerce.Controllers
                     ");
 
                 _response.StatusCode = HttpStatusCode.OK;
-                _response.Message = "Registerd Successfuly! Please Login";
+                _response.Message = "Registerd Successfuly! Please confirm your Email,check inbox";
                 return Ok(_response);
             }
             catch (Exception ex)
