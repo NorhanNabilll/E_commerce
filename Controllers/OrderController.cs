@@ -16,7 +16,7 @@ namespace ECommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
@@ -51,6 +51,7 @@ namespace ECommerce.Controllers
         }
 
         [HttpPost("calculate")]
+        [Authorize]
         public async Task<ActionResult<OrderCalculationResult>> CalculateOrder([FromBody] OrderCalculationRequestDto request)
         {
             try
@@ -92,6 +93,7 @@ namespace ECommerce.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize]
         public async Task<ActionResult<Order>> CreateOrder([FromBody] CreateOrderRequestDto request)
         {
             try
@@ -161,6 +163,7 @@ namespace ECommerce.Controllers
         }
 
         [HttpGet("{id}", Name = "GetOrder")]
+        [Authorize]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
             try
@@ -184,6 +187,7 @@ namespace ECommerce.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<List<Order>>> GetUserOrders( )
         {
             try
@@ -256,6 +260,7 @@ namespace ECommerce.Controllers
 
         // Calculate shipping cost for a location
         [HttpGet("shipping-cost")]
+        [Authorize]
         [ProducesResponseType(typeof(ShippingCostResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ShippingCostResult>> CalculateShippingCost(

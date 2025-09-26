@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
@@ -138,6 +139,73 @@ namespace ECommerce.Controllers
             return BadRequest("Email confirmation failed.");
         }
 
+  
+
+        [HttpPost("resend-confirmation")]
+        public async Task<ActionResult<APIResponse>> ResendConfirmationEmail(string Email)
+        {
+            try
+            {
+                // Find user by email
+                var user = await _userRepository.GetUserByEmailAsync(Email);
+                if (user == null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("User not found.");
+                    return BadRequest(_response);
+                }
+
+                // Check if email is already confirmed
+                if (await _userManager.IsEmailConfirmedAsync(user))
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Email is already confirmed.");
+                    return BadRequest(_response);
+                }
+
+                // Generate new confirmation token
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var encodedToken = Uri.EscapeDataString(token);
+
+                var confirmationLink = $"https://localhost:7090/api/Authentication/confirmemail?userId={user.Id}&token={encodedToken}";
+
+                // Send confirmation email
+                await _emailService.SendEmailAsync(
+                    user.Email,
+                    "Confirm Your Email - Resent",
+                    $@"
+            <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;'>
+                <h2 style='color: #333;'>Verify Your Email</h2>
+                <p style='font-size: 16px; color: #555;'>
+                    You requested a new email confirmation. Please confirm your account by clicking the button below:
+                </p>
+                <a href='{confirmationLink}' style='display: inline-block; padding: 12px 20px; margin-top: 15px; background-color: #28a745; color: #fff; text-decoration: none; border-radius: 5px; font-weight: bold;'>
+                    Confirm Email
+                </a>
+                <p style='margin-top: 20px; font-size: 14px; color: #999;'>
+                    If you did not request this, please ignore this email.
+                </p>
+                <hr style='margin: 30px 0;' />
+                <p style='font-size: 12px; color: #aaa;'>&copy; 2025 GoGreen Store. All rights reserved.</p>
+            </div>
+            ");
+
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Message = "Confirmation email resent successfully! Please check your inbox.";
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.Message };
+                return StatusCode((int)HttpStatusCode.InternalServerError, _response);
+            }
+        }
+
 
         [HttpPost("Login")]
         public async Task<ActionResult<APIResponse>> Login([FromBody] loginRequestDto request)
@@ -154,7 +222,7 @@ namespace ECommerce.Controllers
                     return Unauthorized(_response);
                 }
 
-                // ✅ Check if email is confirmed
+                //  Check if email is confirmed
                 if (!await _userManager.IsEmailConfirmedAsync(user))
                 {
                     _response.StatusCode = HttpStatusCode.Unauthorized;
